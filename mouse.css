@@ -1,0 +1,99 @@
+body {
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #fbf7ef;
+    margin: 0;
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+header {
+    height: 10rem;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+canvas {
+    background-color: #ffffff;
+    display: block;
+    margin: 0 auto;
+    border-radius: .6875rem; 
+    border: .0625rem solid #000;
+    transition: transform 0.2s;
+}
+
+canvas:hover {
+    transform: scale(1.01);
+    box-shadow: rgba(0, 0, 0) 1px 2px 3px;
+}
+
+#score, #best-score {
+    font-size: 20px;
+    color: #ff4500;
+    transition: color 0.3s;
+}
+
+#score:hover, #best-score:hover {
+    color: #ff1493;
+}
+
+.score-container {
+    width: 800px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 10px auto;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    color: #ff69b4;
+    margin-bottom: 10px;
+}
+
+a {
+    color: #ff69b4;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none; 
+    text-shadow: rgba(0, 0, 0) 1px 2px 3px;
+    font-size: 2.1rem;
+}
+a:visited {
+    color: inherit; 
+}
+
+#best-score {
+    font-size: 24px;
+    color: #ff4500;
+    display: inline-block;
+    /* transform-origin: left center; */
+    transform-origin: right center;
+}
+
+.new-best-score {
+    animation: bestScoreAnimation 1.3s ease-in-out;
+}
+
+@keyframes bestScoreAnimation {
+    0% {
+        transform: scale(1);
+        font-weight: normal;
+    }
+    50% {
+        transform: scale(1.2);
+        font-weight: bold;
+        text-shadow: rgba(240, 46, 170, 0.4) 5px 5px, 
+                     rgba(240, 46, 170, 0.3) 10px 10px, 
+                     rgba(240, 46, 170, 0.2) 15px 15px, 
+                     rgba(240, 46, 170, 0.1) 20px 20px, 
+                     rgba(240, 46, 170, 0.05) 25px 25px;
+    }
+    100% {
+        transform: scale(1);
+        font-weight: normal;
+    }
+}
