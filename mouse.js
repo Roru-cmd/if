@@ -47,7 +47,7 @@ let mousePosition = { x: mouse.x, y: mouse.y };
 // Get "Best Score" from localStorage or set to 0
 let bestScore = localStorage.getItem('bestScore') || 0;
 bestScore = parseInt(bestScore, 10);
-bestScoreElement.textContent = 'Best Score: ' + bestScore;
+bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
 // Add mousemove event listener to update mouse position
 canvas.addEventListener('mousemove', updateMousePosition);
@@ -113,7 +113,7 @@ function updateCat() {
                 if (score > bestScore) {
                     bestScore = score;
                     localStorage.setItem('bestScore', bestScore);
-                    bestScoreElement.textContent = 'Best Score: ' + bestScore;
+                    bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
                 }
             }
         }
@@ -178,7 +178,7 @@ function checkCheeseCollision() {
 
     if (distance < 20) { // Cheese collision check
         score++;
-        scoreElement.textContent = 'Score: ' + score;
+        scoreElement.textContent = 'SCORE: ' + score;
         cheese.x = Math.random() * (canvas.width - 40) + 20;
         cheese.y = Math.random() * (canvas.height - 40) + 20;
 
@@ -186,7 +186,7 @@ function checkCheeseCollision() {
         if (score > bestScore) {
             bestScore = score;
             localStorage.setItem('bestScore', bestScore);
-            bestScoreElement.textContent = 'Best Score: ' + bestScore;
+            bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
             // Play animation for the best score
             if (!bestScoreAnimated) {
@@ -233,12 +233,12 @@ function drawGameOver() {
         ctx.font = 'bold 48px cursive';
         ctx.fillText('GAME OVER', xPosition, canvas.height / 2.7);
 
-        ctx.font = '36px "Azeret Mono"';
-        let text = 'Your Score: ' + score;
+        ctx.font = '32px "Azeret Mono"';
+        let text = 'YOUR SCORE: ' + score;
         let textWidth = ctx.measureText(text).width;
         ctx.fillText(text, xPosition, canvas.height / 2.5 + 70);
         
-        text = 'Best Score: ' + bestScore;
+        text = 'BEST SCORE: ' + bestScore;
         textWidth = ctx.measureText(text).width;
         ctx.fillText(text, xPosition, canvas.height / 2.5 + 130);
         
@@ -259,7 +259,7 @@ document.addEventListener('keydown', function(e) {
 function restartGame() {
     // Score reset
     score = 0;
-    scoreElement.textContent = 'Score: ' + score;
+    scoreElement.textContent = 'SCORE: ' + score;
     gameOver = false;
     bestScoreAnimated = false;
 

@@ -1,4 +1,4 @@
-body {
+/* body {
     text-align: center;
     font-family: 'Press Start 2P', cursive;
     background-color: #fbf7ef;
@@ -70,7 +70,118 @@ a:visited {
     font-size: 24px;
     color: #ff4500;
     display: inline-block;
-    /* transform-origin: left center; */
+    transform-origin: right center;
+}
+
+.new-best-score {
+    animation: bestScoreAnimation 1.3s ease-in-out;
+}
+
+@keyframes bestScoreAnimation {
+    0% {
+        transform: scale(1);
+        font-weight: normal;
+    }
+    50% {
+        transform: scale(1.2);
+        font-weight: bold;
+        text-shadow: rgba(240, 46, 170, 0.4) 5px 5px, 
+                     rgba(240, 46, 170, 0.3) 10px 10px, 
+                     rgba(240, 46, 170, 0.2) 15px 15px, 
+                     rgba(240, 46, 170, 0.1) 20px 20px, 
+                     rgba(240, 46, 170, 0.05) 25px 25px;
+    }
+    100% {
+        transform: scale(1);
+        font-weight: normal;
+    }
+} */
+
+@font-face {
+    font-family: 'Avenir Heavy Oblique';
+    src: url('AvenirLTStd-HeavyOblique.otf') format('opentype');
+    font-weight: bold;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'Avenir Light Oblique';
+    src: url('AvenirLTStd-LightOblique.otf') format('opentype');
+    font-weight: 300;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'Avenir Oblique';
+    src: url('AvenirLTStd-Oblique.otf') format('opentype');
+    font-weight: normal;
+    font-style: oblique;
+}
+
+body {
+    text-align: center;
+    font-family: 'Avenir Oblique', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    background-image: none; 
+}
+
+header {
+    height: 8rem;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    border-bottom: 1px solid #000; 
+}
+
+canvas {
+    background-color: #fff;
+    display: block;
+    margin: 20px auto;
+    border-radius: 0.5rem; /* 0 to remove rounded corners */
+    border: 2px solid #000;
+    box-shadow: none; 
+    transition: none;
+}
+
+#score, #best-score {
+    font-family: 'Avenir Oblique', sans-serif;
+    font-size: 20px;
+    color: #333; 
+    transition: none;
+}
+
+.score-container {
+    width: 100%;
+    max-width: 600px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 30px auto;
+}
+
+h1 {
+    font-family: 'Avenir Heavy Oblique', sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #ab3a11; 
+}
+
+#best-score {
+    color: #ab3a11;
+    display: inline-block;
     transform-origin: right center;
 }
 
