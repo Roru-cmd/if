@@ -203,8 +203,6 @@ function checkCheeseCollision() {
     }
 }
 
-
-
 function drawMouse() {
     ctx.fillText(mouse.emoji, mouse.x - 15, mouse.y + 15);
 }
