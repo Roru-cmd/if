@@ -44,12 +44,12 @@ let gameOver = false;
 
 let mousePosition = { x: mouse.x, y: mouse.y };
 
-// Get "Best Score" from localStorage or set to 0
+// Получаем лучший счёт из localStorage или устанавливаем 0
 let bestScore = localStorage.getItem('bestScore') || 0;
 bestScore = parseInt(bestScore, 10);
 bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
-// Add mousemove event listener to update mouse position
+// Добавляем обработчик событий мыши
 canvas.addEventListener('mousemove', updateMousePosition);
 
 function updateMousePosition(e) {
@@ -58,18 +58,68 @@ function updateMousePosition(e) {
     mousePosition.y = e.clientY - rect.top;
 }
 
-function updateMouse() {
-    // Smooth mouse movement to cursor position
-    let dx = mousePosition.x - mouse.x;
-    let dy = mousePosition.y - mouse.y;
-    let distance = Math.hypot(dx, dy);
+// airplane.js (код перенесён сюда)
 
-    if (distance > mouse.speed) {
-        mouse.x += (dx / distance) * mouse.speed;
-        mouse.y += (dy / distance) * mouse.speed;
+// Объект самолёта
+var airplane = {
+    active: false,
+    duration: 5000, // Продолжительность полёта в миллисекундах
+    startTime: null,
+    speed: 7, // Скорость самолёта
+    emoji: '✈️',
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
+
+function startAirplaneMode() {
+    airplane.active = true;
+    airplane.startTime = Date.now();
+    // Устанавливаем позицию самолёта равной текущей позиции мышки
+    airplane.x = mouse.x;
+    airplane.y = mouse.y;
+    // Увеличиваем скорость игрока
+    airplane.speed = 7; // Можно настроить скорость самолёта
+}
+
+function endAirplaneMode() {
+    airplane.active = false;
+    // Возвращаем мышку на позицию самолёта
+    mouse.x = airplane.x;
+    mouse.y = airplane.y;
+    mousePosition.x = mouse.x;
+    mousePosition.y = mouse.y;
+}
+
+function updatePlayer() {
+    if (airplane.active) {
+        let dx = mousePosition.x - airplane.x;
+        let dy = mousePosition.y - airplane.y;
+        let distance = Math.hypot(dx, dy);
+
+        if (distance > airplane.speed) {
+            airplane.x += (dx / distance) * airplane.speed;
+            airplane.y += (dy / distance) * airplane.speed;
+        } else {
+            airplane.x = mousePosition.x;
+            airplane.y = mousePosition.y;
+        }
+
+        // Проверяем, истекло ли время полёта
+        if (Date.now() - airplane.startTime >= airplane.duration) {
+            endAirplaneMode();
+        }
     } else {
-        mouse.x = mousePosition.x;
-        mouse.y = mousePosition.y;
+        let dx = mousePosition.x - mouse.x;
+        let dy = mousePosition.y - mouse.y;
+        let distance = Math.hypot(dx, dy);
+
+        if (distance > mouse.speed) {
+            mouse.x += (dx / distance) * mouse.speed;
+            mouse.y += (dy / distance) * mouse.speed;
+        } else {
+            mouse.x = mousePosition.x;
+            mouse.y = mousePosition.y;
+        }
     }
 }
 
@@ -77,58 +127,71 @@ function spawnCat() {
     cat.active = true;
     cat.x = Math.random() * (canvas.width - 40) + 20;
     cat.y = Math.random() * (canvas.height - 40) + 20;
-    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x); // Angle initial value
+    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x); // Начальный угол
 }
 
 function updateCat() {
     if (cat.active) {
-        let dx = mouse.x - cat.x;
-        let dy = mouse.y - cat.y;
-        let distanceToMouse = Math.hypot(dx, dy);
+        let playerX = airplane.active ? airplane.x : mouse.x;
+        let playerY = airplane.active ? airplane.y : mouse.y;
 
-        if (isCatNearHouse()) {
-            // Cat avoids house
-            avoidHouse();
-        } else if (isMouseInHouse()) {
-            // Cat circles around the house
-            cat.circling = true;
-            circleAroundHouse();
+        if (airplane.active) {
+            // Кошка бродит случайно
+            cat.x += (Math.random() - 0.5) * cat.speed;
+            cat.y += (Math.random() - 0.5) * cat.speed;
+
+            // Ограничиваем передвижение кошки границами поля
+            cat.x = Math.max(0, Math.min(canvas.width, cat.x));
+            cat.y = Math.max(0, Math.min(canvas.height, cat.y));
         } else {
-            // Cat chases the mouse
-            cat.circling = false;
-            if (distanceToMouse > 1) {
-                cat.direction.x = (dx / distanceToMouse);
-                cat.direction.y = (dy / distanceToMouse);
-                cat.x += cat.direction.x * cat.speed;
-                cat.y += cat.direction.y * cat.speed;
+            let dx = playerX - cat.x;
+            let dy = playerY - cat.y;
+            let distanceToPlayer = Math.hypot(dx, dy);
+
+            if (isCatNearHouse()) {
+                avoidHouse();
+            } else if (isPlayerInHouse()) {
+                cat.circling = true;
+                circleAroundHouse();
+            } else {
+                cat.circling = false;
+                if (distanceToPlayer > 1) {
+                    cat.direction.x = (dx / distanceToPlayer);
+                    cat.direction.y = (dy / distanceToPlayer);
+                    cat.x += cat.direction.x * cat.speed;
+                    cat.y += cat.direction.y * cat.speed;
+                }
             }
-        }
 
-        // Check collision with the mouse if the mouse is not in the house
-        if (!isMouseInHouse()) {
-            if (distanceToMouse < 20) { // Collision check
-                gameOver = true;
+            // Проверка столкновения с игроком
+            if (!isPlayerInHouse()) {
+                if (distanceToPlayer < 20) { // Столкновение
+                    gameOver = true;
 
-                // Best Score update
-                if (score > bestScore) {
-                    bestScore = score;
-                    localStorage.setItem('bestScore', bestScore);
-                    bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
+                    // Обновляем лучший счёт
+                    if (score > bestScore) {
+                        bestScore = score;
+                        localStorage.setItem('bestScore', bestScore);
+                        bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
+                    }
                 }
             }
         }
     } else {
         cat.timer++;
-        if (cat.timer > 300) { // Every ~5 secinds at 60 FPS
+        if (cat.timer > 300) { // Каждые ~5 секунд
             spawnCat();
             cat.timer = 0;
         }
     }
 }
 
-function isMouseInHouse() {
-    let dx = mouse.x - house.x;
-    let dy = mouse.y - house.y;
+function isPlayerInHouse() {
+    let playerX = airplane.active ? airplane.x : mouse.x;
+    let playerY = airplane.active ? airplane.y : mouse.y;
+
+    let dx = playerX - house.x;
+    let dy = playerY - house.y;
     let distance = Math.hypot(dx, dy);
 
     return distance < house.size / 2;
@@ -139,72 +202,75 @@ function isCatNearHouse() {
     let dy = cat.y - house.y;
     let distance = Math.hypot(dx, dy);
 
-    return distance < (house.size / 2 + 20); // Extra space around the house
+    return distance < (house.size / 2 + 20); // Дополнительное пространство вокруг домика
 }
 
 function avoidHouse() {
-    // Calculate distance between the cat and the house
     let dx = cat.x - house.x;
     let dy = cat.y - house.y;
     let distance = Math.hypot(dx, dy);
 
     if (distance > 0) {
-        // Push the cat away from the house
         cat.direction.x = (dx / distance);
         cat.direction.y = (dy / distance);
         cat.x += cat.direction.x * cat.speed;
         cat.y += cat.direction.y * cat.speed;
     } else {
-        // If the cat is inside the house, move cat randomly
         cat.x += (Math.random() - 0.5) * cat.speed * 2;
         cat.y += (Math.random() - 0.5) * cat.speed * 2;
     }
 }
 
 function circleAroundHouse() {
-    // Cat's orbit radius
     const radius = house.size;
-    // Increment angle for cat rotation
-    cat.angle += 0.01; // Rotation speed (adjustable)
-    // Refresh cat position around the house
-    cat.x = house.x + Math.cos(cat.angle) * (radius + 20); // +20 cat avoids house
+    cat.angle += 0.01; // Скорость кружения (настраиваемая)
+    cat.x = house.x + Math.cos(cat.angle) * (radius + 20);
     cat.y = house.y + Math.sin(cat.angle) * (radius + 20);
 }
 
 function checkCheeseCollision() {
-    let dx = mouse.x - cheese.x;
-    let dy = mouse.y - cheese.y;
+    let playerX = airplane.active ? airplane.x : mouse.x;
+    let playerY = airplane.active ? airplane.y : mouse.y;
+
+    let dx = playerX - cheese.x;
+    let dy = playerY - cheese.y;
     let distance = Math.hypot(dx, dy);
 
-    if (distance < 20) { // Cheese collision check
+    if (distance < 20) { // Проверка столкновения с сыром
         score++;
         scoreElement.textContent = 'SCORE: ' + score;
         cheese.x = Math.random() * (canvas.width - 40) + 20;
         cheese.y = Math.random() * (canvas.height - 40) + 20;
 
-        // Check if the score is the best score
+        // Проверяем, является ли текущий счёт лучшим
         if (score > bestScore) {
             bestScore = score;
             localStorage.setItem('bestScore', bestScore);
             bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
-            // Play animation for the best score
+            // Анимация лучшего счёта
             if (!bestScoreAnimated) {
                 bestScoreAnimated = true; 
-                // Add class for animation
                 bestScoreElement.classList.add('new-best-score');
-
-                // Remove class after animation ends
                 bestScoreElement.addEventListener('animationend', function() {
                     bestScoreElement.classList.remove('new-best-score');
                 }, { once: true });
             }
         }
     }
+
+    // Проверяем, набрано ли 5 сыров и игрок в домике
+    if (score >= 5 && isPlayerInHouse() && !airplane.active) {
+        startAirplaneMode();
+    }
 }
 
-function drawMouse() {
-    ctx.fillText(mouse.emoji, mouse.x - 15, mouse.y + 15);
+function drawPlayer() {
+    if (airplane.active) {
+        ctx.fillText(airplane.emoji, airplane.x - 15, airplane.y + 15);
+    } else {
+        ctx.fillText(mouse.emoji, mouse.x - 15, mouse.y + 15);
+    }
 }
 
 function drawCheese() {
@@ -228,26 +294,28 @@ function drawGameOver() {
         ctx.fillStyle = 'white';
         const xPosition = canvas.width / 2 - 150;
 
-        ctx.font = 'bold 48px cursive';
+        ctx.font = 'bold 48px "Montserrat BoldItalic"';
         ctx.fillText('GAME OVER', xPosition, canvas.height / 2.7);
 
         ctx.font = '32px "Azeret Mono"';
         let text = 'YOUR SCORE: ' + score;
         let textWidth = ctx.measureText(text).width;
         ctx.fillText(text, xPosition, canvas.height / 2.5 + 70);
-        
+
         text = 'BEST SCORE: ' + bestScore;
         textWidth = ctx.measureText(text).width;
         ctx.fillText(text, xPosition, canvas.height / 2.5 + 130);
-        
+
         ctx.font = '22px "Azeret Mono"';
         text = 'To restart, press R';
         textWidth = ctx.measureText(text).width;
         ctx.fillText(text, (canvas.width - textWidth) / 2, canvas.height / 2.5 + 190);
+
+        ctx.font = '30px Arial';
     }
 }
 
-// Game restart on 'R' key press
+// Перезапуск игры при нажатии клавиши 'R'
 document.addEventListener('keydown', function(e) {
     if (gameOver && e.key.toLowerCase() === 'r') {
         restartGame();
@@ -255,13 +323,17 @@ document.addEventListener('keydown', function(e) {
 });
 
 function restartGame() {
-    // Score reset
+    // Сброс счёта
     score = 0;
     scoreElement.textContent = 'SCORE: ' + score;
     gameOver = false;
     bestScoreAnimated = false;
 
-    // Reset mouse position
+    // Сброс состояния самолёта
+    airplane.active = false;
+    airplane.startTime = null;
+
+    // Сброс позиции мышки
     mouse.x = canvas.width / 2;
     mouse.y = canvas.height / 2;
     mousePosition.x = mouse.x;
@@ -278,18 +350,19 @@ function restartGame() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '30px Arial';
     drawHouse();
     drawCheese();
-    drawMouse();
+    drawPlayer();
     drawCat();
     drawGameOver();
 }
 
 function update() {
     if (!gameOver) {
-        updateMouse();
-        updateCat();
+        updatePlayer();
         checkCheeseCollision();
+        updateCat();
     }
 }
 
