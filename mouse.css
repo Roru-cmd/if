@@ -19,6 +19,27 @@
     font-style: oblique;
 }
 
+@font-face {
+    font-family: 'Azeret Mono Italic';
+    src: url('AzeretMono-Italic-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Azeret Mono';
+    src: url('AzeretMono-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat BoldItalic';
+    src: url('Montserrat-BoldItalic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
 body {
     text-align: center;
     font-family: 'Avenir Oblique', sans-serif;
