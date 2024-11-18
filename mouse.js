@@ -6,6 +6,9 @@ let bestScoreAnimated = false;
 
 ctx.font = '30px Arial';
 
+// Floating text array
+const floatingTexts = [];
+
 const mouse = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -287,7 +290,10 @@ function checkCheeseCollision() {
         if (distance < 20) { //Collision with cherry
             score += 3; 
             scoreElement.textContent = 'SCORE: ' + score;
-            cherry.active = false; // Убираем вишенку с экрана
+            cherry.active = false; 
+
+            // Cretae floating text '+3'
+             createFloatingText('+3', cherry.x, cherry.y);
 
             // Check best score
             if (score > bestScore) {
@@ -347,6 +353,46 @@ function drawCat() {
 function drawHouse() {
     ctx.fillText(house.emoji, house.x - 25, house.y + 25);
 }
+
+function createFloatingText(text, x, y) {
+    floatingTexts.push({
+        text: text,
+        x: x,
+        y: y,
+        opacity: 1,          // Float text opacity
+        life: 70,            // Float text life (frames)
+        riseSpeed: 1,        // Float text rise speed
+        fadeSpeed: 0.0143    // Float text fade speed (1/life)
+    });
+}
+
+function updateFloatingTexts() {
+    for (let i = 0; i < floatingTexts.length; i++) {
+        const ft = floatingTexts[i];
+        ft.y -= ft.riseSpeed;         
+        ft.opacity -= ft.fadeSpeed;   
+        ft.life--;
+
+       
+        if (ft.life <= 0 || ft.opacity <= 0) {
+            floatingTexts.splice(i, 1);
+            i--; 
+        }
+    }
+}
+
+function drawFloatingTexts() {
+    ctx.font = '20px "Azeret Mono"'; 
+    for (const ft of floatingTexts) {
+        ctx.save();
+        ctx.globalAlpha = ft.opacity; 
+        ctx.fillStyle = '#de3163';     // Float text color
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+    }
+}
+
+
 
 function drawGameOver() {
     if (gameOver) {
@@ -422,6 +468,7 @@ function draw() {
     drawCherry();
     drawPlayer();
     drawCat();
+    drawFloatingTexts();
     drawGameOver();
 }
 
@@ -430,6 +477,7 @@ function update() {
         updatePlayer();
         checkCheeseCollision();
         updateCat();
+        updateFloatingTexts(); 
 
         // Cherry duration
         if (cherry.active && Date.now() - cherry.spawnTime >= cherry.duration) {
