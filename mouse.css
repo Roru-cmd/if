@@ -1,41 +1,41 @@
 @font-face {
     font-family: 'Avenir Heavy Oblique';
-    src: url('AvenirLTStd-HeavyOblique.otf') format('opentype');
+    src: url('fonts/AvenirLTStd-HeavyOblique.otf') format('opentype');
     font-weight: bold;
     font-style: oblique;
 }
 
 @font-face {
     font-family: 'Avenir Light Oblique';
-    src: url('AvenirLTStd-LightOblique.otf') format('opentype');
+    src: url('fonts/AvenirLTStd-LightOblique.otf') format('opentype');
     font-weight: 300;
     font-style: oblique;
 }
 
 @font-face {
     font-family: 'Avenir Oblique';
-    src: url('AvenirLTStd-Oblique.otf') format('opentype');
+    src: url('fonts/AvenirLTStd-Oblique.otf') format('opentype');
     font-weight: normal;
     font-style: oblique;
 }
 
 @font-face {
     font-family: 'Azeret Mono Italic';
-    src: url('AzeretMono-Italic-VariableFont_wght.ttf') format('truetype');
+    src: url('fonts/AzeretMono-Italic-VariableFont_wght.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Azeret Mono';
-    src: url('AzeretMono-VariableFont_wght.ttf') format('truetype');
+    src: url('fonts/AzeretMono-VariableFont_wght.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Montserrat BoldItalic';
-    src: url('Montserrat-BoldItalic.ttf') format('truetype');
+    src: url('fonts/Montserrat-BoldItalic.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
 }
