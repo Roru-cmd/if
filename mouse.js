@@ -4,7 +4,6 @@ const scoreElement = document.getElementById('score');
 const bestScoreElement = document.getElementById('best-score'); 
 let bestScoreAnimated = false;
 
-// Emoji font size
 ctx.font = '30px Arial';
 
 const mouse = {
@@ -44,12 +43,12 @@ let gameOver = false;
 
 let mousePosition = { x: mouse.x, y: mouse.y };
 
-// Получаем лучший счёт из localStorage или устанавливаем 0
+// Check if the best score is stored in the local storage
 let bestScore = localStorage.getItem('bestScore') || 0;
 bestScore = parseInt(bestScore, 10);
 bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
-// Добавляем обработчик событий мыши
+// Add mousemove event listener to update mouse position
 canvas.addEventListener('mousemove', updateMousePosition);
 
 function updateMousePosition(e) {
@@ -58,14 +57,11 @@ function updateMousePosition(e) {
     mousePosition.y = e.clientY - rect.top;
 }
 
-// airplane.js (код перенесён сюда)
-
-// Объект самолёта
 var airplane = {
     active: false,
-    duration: 5000, // Продолжительность полёта в миллисекундах
+    duration: 5000, // Airplane mode duration
     startTime: null,
-    speed: 7, // Скорость самолёта
+    speed: 10, // Airplane speed
     emoji: '✈️',
     x: canvas.width / 2,
     y: canvas.height / 2
@@ -74,16 +70,13 @@ var airplane = {
 function startAirplaneMode() {
     airplane.active = true;
     airplane.startTime = Date.now();
-    // Устанавливаем позицию самолёта равной текущей позиции мышки
     airplane.x = mouse.x;
     airplane.y = mouse.y;
-    // Увеличиваем скорость игрока
-    airplane.speed = 7; // Можно настроить скорость самолёта
+    airplane.speed = 10; // Airplane speed
 }
 
 function endAirplaneMode() {
     airplane.active = false;
-    // Возвращаем мышку на позицию самолёта
     mouse.x = airplane.x;
     mouse.y = airplane.y;
     mousePosition.x = mouse.x;
@@ -104,7 +97,7 @@ function updatePlayer() {
             airplane.y = mousePosition.y;
         }
 
-        // Проверяем, истекло ли время полёта
+        // Check if the airplane mode duration has passed
         if (Date.now() - airplane.startTime >= airplane.duration) {
             endAirplaneMode();
         }
@@ -127,7 +120,7 @@ function spawnCat() {
     cat.active = true;
     cat.x = Math.random() * (canvas.width - 40) + 20;
     cat.y = Math.random() * (canvas.height - 40) + 20;
-    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x); // Начальный угол
+    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x); // Initial angle
 }
 
 function updateCat() {
@@ -136,11 +129,11 @@ function updateCat() {
         let playerY = airplane.active ? airplane.y : mouse.y;
 
         if (airplane.active) {
-            // Кошка бродит случайно
+            // Cat walks randomly
             cat.x += (Math.random() - 0.5) * cat.speed;
             cat.y += (Math.random() - 0.5) * cat.speed;
 
-            // Ограничиваем передвижение кошки границами поля
+            // Limit cat position to canvas
             cat.x = Math.max(0, Math.min(canvas.width, cat.x));
             cat.y = Math.max(0, Math.min(canvas.height, cat.y));
         } else {
@@ -163,12 +156,12 @@ function updateCat() {
                 }
             }
 
-            // Проверка столкновения с игроком
+            // Check collision with player
             if (!isPlayerInHouse()) {
-                if (distanceToPlayer < 20) { // Столкновение
+                if (distanceToPlayer < 20) { // Collision with player
                     gameOver = true;
 
-                    // Обновляем лучший счёт
+                    // Refresh best score
                     if (score > bestScore) {
                         bestScore = score;
                         localStorage.setItem('bestScore', bestScore);
@@ -179,7 +172,7 @@ function updateCat() {
         }
     } else {
         cat.timer++;
-        if (cat.timer > 300) { // Каждые ~5 секунд
+        if (cat.timer > 300) { // Every 5 seconds
             spawnCat();
             cat.timer = 0;
         }
@@ -202,7 +195,7 @@ function isCatNearHouse() {
     let dy = cat.y - house.y;
     let distance = Math.hypot(dx, dy);
 
-    return distance < (house.size / 2 + 20); // Дополнительное пространство вокруг домика
+    return distance < (house.size / 2 + 20); // Additional distance to house
 }
 
 function avoidHouse() {
@@ -223,7 +216,7 @@ function avoidHouse() {
 
 function circleAroundHouse() {
     const radius = house.size;
-    cat.angle += 0.01; // Скорость кружения (настраиваемая)
+    cat.angle += 0.01; // Circular motion speed
     cat.x = house.x + Math.cos(cat.angle) * (radius + 20);
     cat.y = house.y + Math.sin(cat.angle) * (radius + 20);
 }
@@ -236,19 +229,19 @@ function checkCheeseCollision() {
     let dy = playerY - cheese.y;
     let distance = Math.hypot(dx, dy);
 
-    if (distance < 20) { // Проверка столкновения с сыром
+    if (distance < 20) { // Check collision with cheese
         score++;
         scoreElement.textContent = 'SCORE: ' + score;
         cheese.x = Math.random() * (canvas.width - 40) + 20;
         cheese.y = Math.random() * (canvas.height - 40) + 20;
 
-        // Проверяем, является ли текущий счёт лучшим
+        // Check if the player has a new best score
         if (score > bestScore) {
             bestScore = score;
             localStorage.setItem('bestScore', bestScore);
             bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
 
-            // Анимация лучшего счёта
+            // Best score animation
             if (!bestScoreAnimated) {
                 bestScoreAnimated = true; 
                 bestScoreElement.classList.add('new-best-score');
@@ -259,7 +252,7 @@ function checkCheeseCollision() {
         }
     }
 
-    // Проверяем, набрано ли 5 сыров и игрок в домике
+    // Check if the player has collected 5 cheeses and is inside the house
     if (score >= 5 && isPlayerInHouse() && !airplane.active) {
         startAirplaneMode();
     }
@@ -315,7 +308,7 @@ function drawGameOver() {
     }
 }
 
-// Перезапуск игры при нажатии клавиши 'R'
+// Game Restart 'R'
 document.addEventListener('keydown', function(e) {
     if (gameOver && e.key.toLowerCase() === 'r') {
         restartGame();
@@ -323,17 +316,17 @@ document.addEventListener('keydown', function(e) {
 });
 
 function restartGame() {
-    // Сброс счёта
+    // Score reset
     score = 0;
     scoreElement.textContent = 'SCORE: ' + score;
     gameOver = false;
     bestScoreAnimated = false;
 
-    // Сброс состояния самолёта
+    // Plane reset
     airplane.active = false;
     airplane.startTime = null;
 
-    // Сброс позиции мышки
+    // Mouse reset
     mouse.x = canvas.width / 2;
     mouse.y = canvas.height / 2;
     mousePosition.x = mouse.x;
