@@ -24,8 +24,9 @@ const cherry = {
     y: null,
     emoji: '🍒',
     active: false,
-    spawnCounter: 0, // Cherry spawn counter
-    nextSpawn: 0     // Cheese amount to spawn cherry
+    spawnCounter: 0,    // Cherry spawn counter
+    nextSpawn: 0,       // Cheese amount to spawn cherry
+    duration: 5000      // Cherry duration
 };
 
 
@@ -57,6 +58,11 @@ let mousePosition = { x: mouse.x, y: mouse.y };
 let bestScore = localStorage.getItem('bestScore') || 0;
 bestScore = parseInt(bestScore, 10);
 bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
+
+// Random integer between min and max
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // Add mousemove event listener to update mouse position
 canvas.addEventListener('mousemove', updateMousePosition);
@@ -245,6 +251,16 @@ function checkCheeseCollision() {
         cheese.x = Math.random() * (canvas.width - 40) + 20;
         cheese.y = Math.random() * (canvas.height - 40) + 20;
 
+        // Increase cherry spawn rate counter
+        if (score >= 20) {
+            cherry.spawnCounter++;
+            if (cherry.spawnCounter >= cherry.nextSpawn) {
+                spawnCherry();
+                cherry.spawnCounter = 0;
+                cherry.nextSpawn = getRandomInt(7, 17);
+            }
+        }
+
         // Check if the player has a new best score
         if (score > bestScore) {
             bestScore = score;
@@ -262,9 +278,51 @@ function checkCheeseCollision() {
         }
     }
 
+    // Check collision with cherry if it's active
+    if (cherry.active) {
+        dx = playerX - cherry.x;
+        dy = playerY - cherry.y;
+        distance = Math.hypot(dx, dy);
+
+        if (distance < 20) { //Collision with cherry
+            score += 3; 
+            scoreElement.textContent = 'SCORE: ' + score;
+            cherry.active = false; // Убираем вишенку с экрана
+
+            // Check best score
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('bestScore', bestScore);
+                bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
+
+                // Best score animation
+                if (!bestScoreAnimated) {
+                    bestScoreAnimated = true;
+                    bestScoreElement.classList.add('new-best-score');
+                    bestScoreElement.addEventListener('animationend', function () {
+                        bestScoreElement.classList.remove('new-best-score');
+                    }, { once: true });
+                }
+            }
+        }
+    }
+
     // Check if the player has collected 5 cheeses and is inside the house
     if (score >= 5 && isPlayerInHouse() && !airplane.active) {
         startAirplaneMode();
+    }
+}
+
+function spawnCherry() {
+    cherry.active = true;
+    cherry.x = Math.random() * (canvas.width - 40) + 20;
+    cherry.y = Math.random() * (canvas.height - 40) + 20;
+    cherry.spawnTime = Date.now();
+}
+
+function drawCherry() {
+    if (cherry.active) {
+        ctx.fillText(cherry.emoji, cherry.x - 15, cherry.y + 15);
     }
 }
 
@@ -342,6 +400,11 @@ function restartGame() {
     mousePosition.x = mouse.x;
     mousePosition.y = mouse.y;
 
+    // Cherry reset
+    cherry.active = false;
+    cherry.spawnCounter = 0;
+    cherry.nextSpawn = getRandomInt(7, 17);
+
     cat.active = false;
     cat.timer = 0;
     cat.x = Math.random() * (canvas.width - 40) + 20;
@@ -356,6 +419,7 @@ function draw() {
     ctx.font = '30px Arial';
     drawHouse();
     drawCheese();
+    drawCherry();
     drawPlayer();
     drawCat();
     drawGameOver();
@@ -366,6 +430,11 @@ function update() {
         updatePlayer();
         checkCheeseCollision();
         updateCat();
+
+        // Cherry duration
+        if (cherry.active && Date.now() - cherry.spawnTime >= cherry.duration) {
+            cherry.active = false;
+        }
     }
 }
 
