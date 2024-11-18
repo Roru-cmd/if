@@ -19,6 +19,16 @@ const cheese = {
     emoji: '🧀'
 };
 
+const cherry = {
+    x: null,
+    y: null,
+    emoji: '🍒',
+    active: false,
+    spawnCounter: 0, // Cherry spawn counter
+    nextSpawn: 0     // Cheese amount to spawn cherry
+};
+
+
 const cat = {
     x: Math.random() * (canvas.width - 40) + 20,
     y: Math.random() * (canvas.height - 40) + 20,
@@ -57,7 +67,7 @@ function updateMousePosition(e) {
     mousePosition.y = e.clientY - rect.top;
 }
 
-var airplane = {
+const airplane = {
     active: false,
     duration: 5000, // Airplane mode duration
     startTime: null,
