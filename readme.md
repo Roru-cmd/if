@@ -1,6 +1,6 @@
 # Cat and Mouse
 
-Pure JavaScript  
+Pure JavaScript.  
 
 <https://mouse-ebon.vercel.app>
 
