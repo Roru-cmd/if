@@ -27,10 +27,11 @@ const cherry = {
     y: null,
     emoji: '🍒',
     active: false,
-    spawnCounter: 0,    // Counts how many cheeses have been collected since last cherry spawn
-    nextSpawn: 0,       // Number of cheeses needed until next cherry spawn
-    duration: 5000      // Cherry display duration in milliseconds
+    spawnCounter: 0,    // Counts how many cheeses have been collected since last cherry
+    nextSpawn: 0,       // Number of cheeses required until next cherry spawn
+    duration: 5000       // Cherry display duration in milliseconds
 };
+
 
 const cat = {
     x: Math.random() * (canvas.width - 40) + 20,
@@ -51,7 +52,6 @@ const house = {
     emoji: '🏠'
 };
 
-// Airplane icon object
 const airplaneIcon = {
     x: null,
     y: null,
@@ -59,7 +59,6 @@ const airplaneIcon = {
     active: false
 };
 
-// Tracks how many cheeses are collected since last airplane mode ended
 let cheeseCollectedSinceLastPlane = 0;
 
 // Function to spawn the airplane icon
@@ -74,7 +73,7 @@ let gameOver = false;
 
 let mousePosition = { x: mouse.x, y: mouse.y };
 
-// Check if the best score is stored in localStorage
+// Get the best score from localStorage or set it to 0
 let bestScore = localStorage.getItem('bestScore') || 0;
 bestScore = parseInt(bestScore, 10);
 bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
@@ -84,7 +83,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Update mouse position on mousemove
+// Update mouse position on mouse move
 canvas.addEventListener('mousemove', updateMousePosition);
 
 function updateMousePosition(e) {
@@ -95,7 +94,7 @@ function updateMousePosition(e) {
 
 const airplane = {
     active: false,
-    duration: 5000, // Airplane mode duration in ms
+    duration: 5000, // Airplane mode duration
     startTime: null,
     speed: 10, // Airplane speed
     emoji: '✈️',
@@ -108,7 +107,7 @@ function startAirplaneMode() {
     airplane.startTime = Date.now();
     airplane.x = mouse.x;
     airplane.y = mouse.y;
-    airplane.speed = 10; 
+    airplane.speed = 10; // Airplane speed
 }
 
 function endAirplaneMode() {
@@ -134,7 +133,7 @@ function updatePlayer() {
             airplane.y = mousePosition.y;
         }
 
-        // Check if airplane mode duration ended
+        // Check if airplane mode duration has passed
         if (Date.now() - airplane.startTime >= airplane.duration) {
             endAirplaneMode();
         }
@@ -157,7 +156,7 @@ function spawnCat() {
     cat.active = true;
     cat.x = Math.random() * (canvas.width - 40) + 20;
     cat.y = Math.random() * (canvas.height - 40) + 20;
-    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x);
+    cat.angle = Math.atan2(cat.y - house.y, cat.x - house.x); // Initial angle
 }
 
 function updateCat() {
@@ -170,7 +169,7 @@ function updateCat() {
             cat.x += (Math.random() - 0.5) * cat.speed;
             cat.y += (Math.random() - 0.5) * cat.speed;
 
-            // Limit cat position to canvas boundaries
+            // Limit cat position to the canvas boundaries
             cat.x = Math.max(0, Math.min(canvas.width, cat.x));
             cat.y = Math.max(0, Math.min(canvas.height, cat.y));
         } else {
@@ -195,10 +194,10 @@ function updateCat() {
 
             // Check collision with player
             if (!isPlayerInHouse()) {
-                if (distanceToPlayer < 20) {
+                if (distanceToPlayer < 20) { // Collision with player
                     gameOver = true;
 
-                    // Update best score
+                    // Update best score if needed
                     if (score > bestScore) {
                         bestScore = score;
                         localStorage.setItem('bestScore', bestScore);
@@ -209,7 +208,7 @@ function updateCat() {
         }
     } else {
         cat.timer++;
-        if (cat.timer > 300) { 
+        if (cat.timer > 300) { // Spawn cat every ~5 seconds at 60 FPS
             spawnCat();
             cat.timer = 0;
         }
@@ -231,6 +230,7 @@ function isCatNearHouse() {
     let dx = cat.x - house.x;
     let dy = cat.y - house.y;
     let distance = Math.hypot(dx, dy);
+
     return distance < (house.size / 2 + 20);
 }
 
@@ -252,7 +252,7 @@ function avoidHouse() {
 
 function circleAroundHouse() {
     const radius = house.size;
-    cat.angle += 0.01; 
+    cat.angle += 0.01; // Circular motion speed
     cat.x = house.x + Math.cos(cat.angle) * (radius + 20);
     cat.y = house.y + Math.sin(cat.angle) * (radius + 20);
 }
@@ -261,26 +261,28 @@ function checkCheeseCollision() {
     let playerX = airplane.active ? airplane.x : mouse.x;
     let playerY = airplane.active ? airplane.y : mouse.y;
 
+    // Check collision with cheese
     let dx = playerX - cheese.x;
     let dy = playerY - cheese.y;
     let distance = Math.hypot(dx, dy);
 
-    if (distance < 20) { 
+    if (distance < 20) { // Collision with cheese
         score++;
         scoreElement.textContent = 'SCORE: ' + score;
         cheese.x = Math.random() * (canvas.width - 40) + 20;
         cheese.y = Math.random() * (canvas.height - 40) + 20;
 
-        // If not in airplane mode and airplane icon not active, count cheeses for airplane icon
+        // If not in airplane mode and airplane icon is not active, count cheeses for airplane icon appearance
         if (!airplane.active && !airplaneIcon.active) {
             cheeseCollectedSinceLastPlane++;
+            // If 5 cheeses are collected, spawn the airplane icon
             if (cheeseCollectedSinceLastPlane >= 5) {
                 spawnAirplaneIcon();
                 cheeseCollectedSinceLastPlane = 0;
             }
         }
 
-        // Cherry logic: if score >= 20, start counting for next cherry
+        // If score >= 20, handle cherry spawn logic
         if (score >= 20) {
             cherry.spawnCounter++;
             if (cherry.spawnCounter >= cherry.nextSpawn) {
@@ -307,36 +309,6 @@ function checkCheeseCollision() {
         }
     }
 
-    // Check collision with cherry if it's active
-    if (cherry.active) {
-        dx = playerX - cherry.x;
-        dy = playerY - cherry.y;
-        distance = Math.hypot(dx, dy);
-
-        if (distance < 20) { 
-            score += 3; 
-            scoreElement.textContent = 'SCORE: ' + score;
-            cherry.active = false; 
-            createFloatingText('+3', cherry.x, cherry.y);
-
-            // Check best score
-            if (score > bestScore) {
-                bestScore = score;
-                localStorage.setItem('bestScore', bestScore);
-                bestScoreElement.textContent = 'BEST SCORE: ' + bestScore;
-
-                // Best score animation
-                if (!bestScoreAnimated) {
-                    bestScoreAnimated = true;
-                    bestScoreElement.classList.add('new-best-score');
-                    bestScoreElement.addEventListener('animationend', function () {
-                        bestScoreElement.classList.remove('new-best-score');
-                    }, { once: true });
-                }
-            }
-        }
-    }
-
     // Check collision with airplane icon
     if (airplaneIcon.active) {
         dx = playerX - airplaneIcon.x;
@@ -346,12 +318,16 @@ function checkCheeseCollision() {
             // Mouse caught the airplane icon
             airplaneIcon.active = false;
             startAirplaneMode();
-            cheeseCollectedSinceLastPlane = 0; 
+            // Reset cheeseCollectedSinceLastPlane since airplane mode started
+            cheeseCollectedSinceLastPlane = 0;
         }
     }
+}
 
-    // Check if the player has collected 5 cheeses and is inside the house
-    // Now replaced by the airplane icon logic above, so we do not revert to old logic.
+function drawAirplaneIcon() {
+    if (airplaneIcon.active) {
+        ctx.fillText(airplaneIcon.emoji, airplaneIcon.x - 15, airplaneIcon.y + 15);
+    }
 }
 
 function spawnCherry() {
@@ -364,12 +340,6 @@ function spawnCherry() {
 function drawCherry() {
     if (cherry.active) {
         ctx.fillText(cherry.emoji, cherry.x - 15, cherry.y + 15);
-    }
-}
-
-function drawAirplaneIcon() {
-    if (airplaneIcon.active) {
-        ctx.fillText(airplaneIcon.emoji, airplaneIcon.x - 15, airplaneIcon.y + 15);
     }
 }
 
@@ -400,10 +370,10 @@ function createFloatingText(text, x, y) {
         text: text,
         x: x,
         y: y,
-        opacity: 1,          
-        life: 70,            
-        riseSpeed: 1,        
-        fadeSpeed: 0.0143    
+        opacity: 1,          // Float text initial opacity
+        life: 70,            // Float text lifespan (in frames)
+        riseSpeed: 1,        // Float text upward speed
+        fadeSpeed: 0.0143    // Float text fade speed (1/life)
     });
 }
 
@@ -426,7 +396,7 @@ function drawFloatingTexts() {
     for (const ft of floatingTexts) {
         ctx.save();
         ctx.globalAlpha = ft.opacity; 
-        ctx.fillStyle = '#de3163'; 
+        ctx.fillStyle = '#de3163';     
         ctx.fillText(ft.text, ft.x, ft.y);
         ctx.restore();
     }
@@ -460,6 +430,7 @@ function drawGameOver() {
     }
 }
 
+// Restart the game
 document.addEventListener('keydown', function(e) {
     if (gameOver && e.key.toLowerCase() === 'r') {
         restartGame();
@@ -495,10 +466,6 @@ function restartGame() {
 
     cheese.x = Math.random() * (canvas.width - 40) + 20;
     cheese.y = Math.random() * (canvas.height - 40) + 20;
-
-    // Also reset airplane icon
-    airplaneIcon.active = false;
-    cheeseCollectedSinceLastPlane = 0;
 }
 
 function draw() {
@@ -507,7 +474,7 @@ function draw() {
     drawHouse();
     drawCheese();
     drawCherry();
-    drawAirplaneIcon(); // Draw airplane icon if active
+    drawAirplaneIcon();
     drawPlayer();
     drawCat();
     drawFloatingTexts();
@@ -521,7 +488,7 @@ function update() {
         updateCat();
         updateFloatingTexts(); 
 
-        // Cherry duration check
+        // Check cherry duration
         if (cherry.active && Date.now() - cherry.spawnTime >= cherry.duration) {
             cherry.active = false;
         }
