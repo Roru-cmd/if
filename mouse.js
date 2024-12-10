@@ -59,6 +59,19 @@ const airplaneIcon = {
     active: false
 };
 
+const cheeseSound = new Audio('sounds/picker.wav');
+const startSound = new Audio('sounds/start.wav');
+const gameOverSound = new Audio('sounds/game_over.wav');
+
+let gameOverSoundPlayed = false;
+
+function playGameOverSound() {
+    if (!gameOverSoundPlayed) {
+        gameOverSound.play();
+        gameOverSoundPlayed = true;
+    }
+}
+
 // Tracks how many cheeses are collected since last airplane mode ended
 let cheeseCollectedSinceLastPlane = 0;
 
@@ -167,8 +180,21 @@ function updateCat() {
 
         if (airplane.active) {
             // Cat moves randomly when airplane is active
-            cat.x += (Math.random() - 0.5) * cat.speed;
-            cat.y += (Math.random() - 0.5) * cat.speed;
+            //cat.x += (Math.random() - 0.5) * cat.speed;
+            //cat.y += (Math.random() - 0.5) * cat.speed;
+
+            // Cat follows the airplane
+            let dx = playerX - cat.x;
+            let dy = playerY - cat.y;
+            let distanceToPlayer = Math.hypot(dx, dy);
+            cat.circling = false;
+                if (distanceToPlayer > 1) {
+                    cat.direction.x = (dx / distanceToPlayer);
+                    cat.direction.y = (dy / distanceToPlayer);
+                    cat.x += cat.direction.x * cat.speed;
+                    cat.y += cat.direction.y * cat.speed;
+                }
+
 
             // Limit cat position to canvas boundaries
             cat.x = Math.max(0, Math.min(canvas.width, cat.x));
@@ -266,6 +292,19 @@ function checkCheeseCollision() {
     let distance = Math.hypot(dx, dy);
 
     if (distance < 20) { 
+        // Play the cheese sound
+        cheeseSound.currentTime = 0; // Reset to start if needed for rapid replays
+        cheeseSound.play();
+
+        // Debugging sound issues
+        // cheeseSound.addEventListener('error', function(e) {
+        //     console.error('Error playing sound:', e);
+        // });
+        
+        // cheeseSound.play().catch(function(error) {
+        //     console.error('Play promise rejected:', error);
+        // });
+
         score++;
         scoreElement.textContent = 'SCORE: ' + score;
         cheese.x = Math.random() * (canvas.width - 40) + 20;
@@ -349,9 +388,6 @@ function checkCheeseCollision() {
             cheeseCollectedSinceLastPlane = 0; 
         }
     }
-
-    // Check if the player has collected 5 cheeses and is inside the house
-    // Now replaced by the airplane icon logic above, so we do not revert to old logic.
 }
 
 function spawnCherry() {
@@ -434,6 +470,7 @@ function drawFloatingTexts() {
 
 function drawGameOver() {
     if (gameOver) {
+        playGameOverSound();
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = 'white';
@@ -462,6 +499,7 @@ function drawGameOver() {
 
 document.addEventListener('keydown', function(e) {
     if (gameOver && e.key.toLowerCase() === 'r') {
+        gameOverSound.currentTime = 0;
         restartGame();
     }
 });
@@ -534,4 +572,16 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+// gameLoop();
+
+startButton.addEventListener('click', function() {
+    // Unmute and play a tiny portion silently
+    startSound.muted = true;
+    startSound.play().then(() => {
+        // startSound.pause();
+        startSound.muted = false;
+        startButton.style.display = 'none';
+        // Now start the game
+        gameLoop();
+    });
+});
