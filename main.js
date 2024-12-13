@@ -9,7 +9,7 @@ const floatingTexts = [];
 
 const startSound = new Audio('sounds/start.wav');
 const cheeseSound = new Audio('sounds/picker.wav');
-const cherrySound = new Audio('sounds/picker_extra.wav');
+const cherrySound = new Audio('sounds/picker_extra.ogg');
 const gameOverSound = new Audio('sounds/game_over.wav');
 
 let score = 0;
