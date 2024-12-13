@@ -2,6 +2,24 @@
  * This file contains the main game logic.
  */
 
+// import { 
+//     cat, 
+//     mouse,
+//     cheese,
+//     cherry,
+//     house,
+//     airplane,
+//     airplaneIcon
+//  } from './entities.js';
+
+// console.log(cat, mouse, cheese, cherry, house, airplane, airplaneIcon);
+
+// import { 
+//     updatePlayer, 
+//     updateCat, 
+//     checkCheeseCollision 
+// } from './updateFunctions.js';
+
 const startButton = document.getElementById('startButton');
 
 // Floating text array
@@ -9,7 +27,7 @@ const floatingTexts = [];
 
 const startSound = new Audio('sounds/start.wav');
 const cheeseSound = new Audio('sounds/picker.wav');
-const cherrySound = new Audio('sounds/picker_extra.wav');
+const cherrySound = new Audio('sounds/picker_extra.ogg');
 const gameOverSound = new Audio('sounds/game_over.wav');
 
 let score = 0;

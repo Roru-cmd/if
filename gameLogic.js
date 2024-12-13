@@ -3,6 +3,16 @@
  * If the airplane is active, it moves according to airplane rules.
  * If not, it moves as the mouse.
  */
+
+// import { 
+//     cat, 
+//     mouse,
+//     cheese,
+//     cherry,
+//     airplane,
+//     airplaneIcon
+//  } from './entities.js';
+
 function updatePlayer() {
     if (airplane.active) {
         let dx = mousePosition.x - airplane.x;

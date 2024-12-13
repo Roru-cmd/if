@@ -5,7 +5,6 @@ const HOUSE_SIZE = 57;
 const CHERRY_DURATION = 5000;
 const AIRPLANE_DURATION = 5000;
 
-
 const mouse = {
     x: canvas.width / 2,
     y: canvas.height / 2,
