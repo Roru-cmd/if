@@ -144,3 +144,26 @@ a:hover {
         font-weight: normal;
     }
 }
+
+
+/* Liderboard */
+
+#leaderboard {
+    margin: 20px auto;
+    /* width: 80%; */
+    width: 400px;
+    border-collapse: collapse;
+  }
+  table {
+    width: 100%;
+    border: 0px solid #ccc;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px;
+  }
+  th {
+    border-bottom: 1px solid #ccc;
+    background-color: #f4f4f4;
+  }
+  
