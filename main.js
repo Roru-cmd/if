@@ -234,5 +234,7 @@ startButton.addEventListener('click', function() {
         startSound.muted = false;
         startButton.style.display = 'none';
         gameLoop();
+    }).catch((error) => {
+        console.error('Error playing start sound:', error);
     });
 });
