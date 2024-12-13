@@ -43,11 +43,21 @@ renderLeaderboard(leaderboardData);               // Rebder the table
 updateScore('Fast Fox', 43);
 
 async function submitScore(name, score) {
-const response = await fetch('/api/leaderboard', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name, score }),
-});
-const updatedData = await response.json();
-renderLeaderboard(updatedData);
+  try {
+    const response = await fetch('/api/leaderboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, score }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const updatedData = await response.json(); 
+    renderLeaderboard(updatedData);           
+  } catch (error) {
+    console.error('Error posting to leaderboard:', error);
+    alert('Leaderboard submission failed! Please try again later.');
+  }
 }
