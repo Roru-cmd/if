@@ -19,10 +19,10 @@ const cat = {
     speed: CAT_SPEED,
     active: false,
     timer: 0,
-    emoji: '🐱',
     direction: { x: 0, y: 0 },
     angle: 0,
-    circling: false
+    circling: false,
+    emoji: '🐱'
 };
 
 const cheese = {
@@ -34,11 +34,11 @@ const cheese = {
 const cherry = {
     x: null,
     y: null,
-    emoji: '🍒',
     active: false,
     spawnCounter: 0,            // Counts how many cheeses have been collected since last cherry spawn
     nextSpawn: 0,               // Number of cheeses needed until next cherry spawn
-    duration: CHERRY_DURATION   
+    duration: CHERRY_DURATION,   
+    emoji: '🍒'
 };
 
 const house = {
@@ -54,13 +54,13 @@ const airplane = {
     active: false,
     startTime: null,
     speed: AIRPLANE_SPEED,       
-    emoji: '✈️',
-    duration: AIRPLANE_DURATION
+    duration: AIRPLANE_DURATION,
+    emoji: '✈️'
 };
 
 const airplaneIcon = {
     x: null,
     y: null,
-    emoji: '✈️',
-    active: false
+    active: false,
+    emoji: '✈️'
 };

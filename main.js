@@ -214,6 +214,11 @@ function update() {
         if (cherry.active && Date.now() - cherry.spawnTime >= cherry.duration) {
             cherry.active = false;
         }
+
+        // Airplane icon duration check
+        if (airplaneIcon.active && Date.now() - airplane.startTime >= airplane.duration) {
+            airplaneIcon.active = false;
+        }
     }
 }
 
