@@ -7,8 +7,9 @@ const startButton = document.getElementById('startButton');
 // Floating text array
 const floatingTexts = [];
 
-const cheeseSound = new Audio('sounds/picker.wav');
 const startSound = new Audio('sounds/start.wav');
+const cheeseSound = new Audio('sounds/picker.wav');
+const cherrySound = new Audio('sounds/picker_extra.wav');
 const gameOverSound = new Audio('sounds/game_over.wav');
 
 let score = 0;
@@ -225,10 +226,8 @@ function gameLoop() {
 startButton.addEventListener('click', function() {
     startSound.muted = true;
     startSound.play().then(() => {
-        // startSound.pause();
         startSound.muted = false;
         startButton.style.display = 'none';
-
         gameLoop();
     });
 });

@@ -55,14 +55,20 @@ function updateCat() {
             let dx = playerX - cat.x;
             let dy = playerY - cat.y;
             let distanceToPlayer = Math.hypot(dx, dy);
-            cat.circling = false;
+            if (isCatNearHouse()) {
+                avoidHouse();
+            } else if (isPlayerInHouse()) {
+                cat.circling = true;
+                circleAroundHouse();
+            } else {
+                cat.circling = false;
                 if (distanceToPlayer > 1) {
                     cat.direction.x = (dx / distanceToPlayer);
                     cat.direction.y = (dy / distanceToPlayer);
                     cat.x += cat.direction.x * cat.speed;
                     cat.y += cat.direction.y * cat.speed;
                 }
-
+            }
 
             // Limit cat position to canvas boundaries
             cat.x = Math.max(0, Math.min(canvas.width, cat.x));
@@ -185,6 +191,8 @@ function checkCheeseCollision() {
         if (distance < 20) { 
             score += 3; 
             scoreElement.textContent = 'SCORE: ' + score;
+            cheeseSound.currentTime = 0;
+            cherrySound.play();
             cherry.active = false; 
             createFloatingText('+3', cherry.x, cherry.y);
 
