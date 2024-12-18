@@ -1,3 +1,7 @@
+/*
+* Placeholder
+*/
+
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, push, onValue } from "firebase/database";
 
