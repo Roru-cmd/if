@@ -12,6 +12,7 @@ const cheeseSound = new Audio('sounds/picker_crunch.wav');
 const cherrySound = new Audio('sounds/picker_extra.ogg');
 const gameOverSound = new Audio('sounds/game_over.wav');
 const airplaneSound = new Audio('sounds/airplane-pilot-5s.mp3');
+// const airplaneSound = new Audio('sounds/airplane-flyby-5s.mp3');
 
 let score = 0;
 let gameOver = false;
