@@ -143,13 +143,13 @@ function checkCheeseCollision() {
         // cheeseSound.play();
 
         // Debugging sound issues
-        cheeseSound.addEventListener('error', function(e) {
-            console.error('=== Error playing sound:', e);
-        });
+        // cheeseSound.addEventListener('error', function(e) {
+        //     console.error('=== Error playing sound:', e);
+        // });
         
-        cheeseSound.play().catch(function(err) {
-            console.error('=== Play promise rejected:', err);
-        });
+        // cheeseSound.play().catch(function(err) {
+        //     console.error('=== Play promise rejected:', err);
+        // });
 
         score++;
         scoreElement.textContent = 'SCORE: ' + score;

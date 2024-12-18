@@ -26,9 +26,11 @@ const startButton = document.getElementById('startButton');
 const floatingTexts = [];
 
 const startSound = new Audio('sounds/start.wav');
-const cheeseSound = new Audio('sounds/picker.wav');
+const cheeseSound = new Audio('sounds/picker_crunch.wav');
 const cherrySound = new Audio('sounds/picker_extra.ogg');
 const gameOverSound = new Audio('sounds/game_over.wav');
+const airplaneSound = new Audio('sounds/airplane-pilot-5s.mp3');
+// const airplaneSound = new Audio('sounds/airplane-flyby-5s.mp3');
 
 let score = 0;
 let gameOver = false;
@@ -70,6 +72,8 @@ function updateMousePosition(e) {
 }
 
 function startAirplaneMode() {
+    airplaneSound.currentTime = 0;
+    airplaneSound.play(); 
     airplane.active = true;
     airplane.startTime = Date.now();
     airplane.x = mouse.x;
